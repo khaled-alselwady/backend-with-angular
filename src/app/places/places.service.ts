@@ -11,6 +11,7 @@ import {
 
 import { Place } from './place.model';
 import { HttpClient } from '@angular/common/http';
+import { ErrorService } from '../shared/error.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ import { HttpClient } from '@angular/common/http';
 export class PlacesService {
   private userPlaces = signal<Place[]>([]);
   private httpClient = inject(HttpClient);
+  private errorService = inject(ErrorService);
 
   loadedUserPlaces = this.userPlaces.asReadonly();
 
@@ -36,6 +38,7 @@ export class PlacesService {
   }
 
   addPlaceToUserPlaces(place: Place) {
+    const previousPlaces = this.userPlaces();
     let isExists = false;
     this.existsByPlaceId(place.id).subscribe({
       next: (exists) => (isExists = exists),
@@ -47,6 +50,17 @@ export class PlacesService {
             .post('https://localhost:7067/api/user-places', {
               placeId: place.id,
             })
+            .pipe(
+              catchError((error) => {
+                this.userPlaces.set(previousPlaces);
+                this.errorService.showError(
+                  'Failed to add place to favorites.'
+                );
+                return throwError(
+                  () => new Error('Failed to add place to favorites.')
+                );
+              })
+            )
             .subscribe();
         }
       },
