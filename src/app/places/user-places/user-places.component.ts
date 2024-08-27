@@ -4,6 +4,7 @@ import type { Place } from '../place.model';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { PlacesComponent } from '../places.component';
 import { PlacesService } from '../places.service';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-user-places',
@@ -17,7 +18,7 @@ export class UserPlacesComponent {
   error = signal('');
   private placesService = inject(PlacesService);
   private destroyRef = inject(DestroyRef);
-  places = this.placesService.loadedUserPlaces;
+  userPlaces = this.placesService.loadedUserPlaces;
 
   ngOnInit() {
     this.isFetching.set(true);
@@ -33,5 +34,13 @@ export class UserPlacesComponent {
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
     });
+  }
+
+  onRemovePlace(selectedPlace: Place) {
+    const subscription = this.placesService
+      .removeUserPlace(selectedPlace.id)
+      .subscribe();
+
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 }
