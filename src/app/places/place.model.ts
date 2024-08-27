@@ -10,7 +10,7 @@
 // }
 
 export interface Place {
-  id: string;
+  id: number;
   title: string;
   imageSrc: string;
   imageAlt?: string;
