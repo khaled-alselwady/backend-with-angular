@@ -103,7 +103,6 @@ export class PlacesService {
       .get(`https://localhost:7067/api/user-places/exists/${placeId}`)
       .pipe(
         map((resData) => {
-          console.log('Continue IN EXISTS ' + resData);
           return resData as boolean;
         })
       );

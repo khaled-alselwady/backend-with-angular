@@ -24,7 +24,6 @@ export class AvailablePlacesComponent implements OnInit {
     this.isFetching.set(true);
     const subscription = this.placesService.loadAvailablePlaces().subscribe({
       next: (places) => {
-        //console.log(resData);
         this.places.set(places);
       },
       error: (error: Error) => {
